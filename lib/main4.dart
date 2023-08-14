@@ -85,7 +85,8 @@ class _MyAppListState extends State<MyAppList> {
               title: Text(listItem.title),
               subtitle: Text(listItem.publishedAt.toIso8601String()),
 
-              // ここのコメントアウトを外すとエラー発生
+              // ここのコメントアウトを外すとエラー発生→138行目のコード変更で解消？
+
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute<void>(
@@ -132,7 +133,7 @@ class MyAppDetail extends StatefulWidget {
 
   // const MyAppDetail({required Key key, required this.id}) : super(key: key);
   // const MyAppDetail({ required Key key, required this.id}) : super(key: key);
-  
+
   //変更箇所
   const MyAppDetail({Key?key, required this.id}) : super(key: key);
 
