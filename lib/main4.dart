@@ -86,15 +86,15 @@ class _MyAppListState extends State<MyAppList> {
               subtitle: Text(listItem.publishedAt.toIso8601String()),
 
               // ここのコメントアウトを外すとエラー発生
-              // onTap: () {
-              //   Navigator.of(context).push(
-              //     MaterialPageRoute<void>(
-              //       builder: (BuildContext context) {
-              //         return MyAppDetail(id: listItem.id);
-              //       },
-              //     ),
-              //   );
-              // },
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (BuildContext context) {
+                      return MyAppDetail(id: listItem.id);
+                    },
+                  ),
+                );
+              },
             ),
           )
         ).toList(),
@@ -131,7 +131,10 @@ class MyAppDetail extends StatefulWidget {
   final String id;
 
   // const MyAppDetail({required Key key, required this.id}) : super(key: key);
-  const MyAppDetail({ required Key key, required this.id}) : super(key: key);
+  // const MyAppDetail({ required Key key, required this.id}) : super(key: key);
+  
+  //変更箇所
+  const MyAppDetail({Key?key, required this.id}) : super(key: key);
 
   @override
   _MyAppDetailState createState() => _MyAppDetailState();
@@ -181,20 +184,20 @@ class _MyAppDetailState extends State<MyAppDetail> {
                 SizedBox(height: 8),
 
                 // ここのコメントアウトを外すとエラー発生
-                // ConstrainedBox(
-                //   constraints: BoxConstraints(maxHeight: 290),
-                //   child:
-                //      WebView(
-                //       initialUrl: 'about:blank',
-                //       onWebViewCreated: (webViewController) {
-                //         webViewController.loadUrl(Uri.dataFromString(
-                //             item['body'],
-                //             mimeType: 'text/html',
-                //             encoding: utf8
-                //         ).toString());
-                //       },
-                //     )
-                // ),
+                ConstrainedBox(
+                  constraints: BoxConstraints(maxHeight: 290),
+                  child:
+                     WebView(
+                      initialUrl: 'about:blank',
+                      onWebViewCreated: (webViewController) {
+                        webViewController.loadUrl(Uri.dataFromString(
+                            item['body'],
+                            mimeType: 'text/html',
+                            encoding: utf8
+                        ).toString());
+                      },
+                    )
+                ),
               ],
             ),
           )
