@@ -4,8 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:http/http.dart' as http;
 
-const endpoint = 'https://g0d4r3ki1s.microcms.io/api/v1/news/';
-const apiKey = 'X77GJpqOSimIXgXf0RXAoa5FL5W0Pzr2Qs1B';
+// const endpoint = 'https://g0d4r3ki1s.microcms.io/api/v1/news/';
+// const apiKey = 'X77GJpqOSimIXgXf0RXAoa5FL5W0Pzr2Qs1B';
+
+const endpoint = 'https://1dsrztk2r7.microcms.io/api/v1/test/';
+const apiKey = 'WuctDl2tY216PaqGo9SGSJCngg5IDofxTHsK';
 
 
 void main() => runApp(MyApp());
@@ -39,17 +42,17 @@ class _MyAppListState extends State<MyAppList> {
         });
 
     //これで表示するデータの中身が確認できます
-    // print(result.body);　　
+    print(result.body);
 
     List contents = json.decode(result.body)['contents'];
-    print(contents);
+    // print(contents);
     _listItems.clear();
     _listItems.addAll(contents.map((content) => ListItem.fromJSON(content)));
 
 
 
-    print("いいい");
-    print(_listItems[0].id);
+    // print("いいい");
+    // print(_listItems[0].id);
 
     
   }
@@ -79,10 +82,11 @@ class _MyAppListState extends State<MyAppList> {
           Card(
             child: ListTile(
               leading: ConstrainedBox(
-                constraints: BoxConstraints(),
+                constraints: const BoxConstraints(),
                 child: Image.network("${listItem.eyecathing.toString()}?w=64&h=64&fit=crop"), //microCMSの画像変更機能を利用
               ),
               title: Text(listItem.title),
+              // title: const Text("タイトル"),
               subtitle: Text(listItem.publishedAt.toIso8601String()),
 
               // ここのコメントアウトを外すとエラー発生→138行目のコード変更で解消？
@@ -142,69 +146,116 @@ class MyAppDetail extends StatefulWidget {
 }
 
 class _MyAppDetailState extends State<MyAppDetail> {
-  late Map<String, dynamic> item;
-  late WebViewController _controller;
+  // late Map<String, dynamic> item;
+  Map<String, dynamic>? item;
+  // _item? <ListItem>[];
+  // List? item;
+
+  late final WebViewController _controller;
+  bool _isLoading = false;
 
   void _loadDetail(String id) async {
     final result = await http.get(
-        Uri.parse('$endpoint/$id'),
+        Uri.parse('$endpoint$id'),
         headers: { "X-API-KEY": apiKey }
     );
+    print('$endpoint$id');
+    // print(result.body);
     setState(() {
+      // item != null ? 
       item = json.decode(result.body);
+      // print(item);
+
     });
   }
 
   @override
   void initState() {
     super.initState();
-    _loadDetail(widget.id);
+      _loadDetail(widget.id);
+      _controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+        ..setNavigationDelegate(
+          NavigationDelegate(
+            onPageStarted: (String url) {
+              setState(() {
+                _isLoading = true;
+              });
+            },
+            onPageFinished: (String url) async {
+              setState(() {
+                _isLoading = false;
+              });
+            },
+          ),
+        )
+      // ..loadRequest(Uri.parse('https://flutter.dev'));
+      ..loadRequest(Uri.parse('$endpoint/$widget.id'));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('記事詳細'),
+        title: const Text('記事詳細'),
       ),
       // ignore: unnecessary_null_comparison
       body: item != null ?
       Column(
         children: [
-          Image.network(item['eyecatching']['url']),
+          Image.network(item!['eyecatching']['url']),
           Container(
             decoration: new BoxDecoration(color: Colors.white),
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  item['title'],
-                  style: TextStyle(fontSize: 24),
+                  item!['title'],
+                  style: const TextStyle(fontSize: 24),
                 ),
-                SizedBox(height: 8),
-
+                const SizedBox(height: 8),
+                // WebViewWidget(controller: _controller),
+                // SingleChildScrollView(child: item!['body'])
+                Text(
+                  item!['body'],
+                  style: const TextStyle(fontSize: 24),
+                  textAlign: TextAlign.left,
+                ),
                 // ここのコメントアウトを外すとエラー発生
-                ConstrainedBox(
-                  constraints: BoxConstraints(maxHeight: 290),
-                  child:
-                     WebView(
-                      initialUrl: 'about:blank',
-                      onWebViewCreated: (webViewController) {
-                        webViewController.loadUrl(Uri.dataFromString(
-                            item['body'],
-                            mimeType: 'text/html',
-                            encoding: utf8
-                        ).toString());
-                      },
-                    )
-                ),
+                // ConstrainedBox(
+                  // constraints: BoxConstraints(maxHeight: 290),
+                  // child:
+                  //   WebViewWidget(
+                  //     controller: WebViewController()
+                  //     initialUrl: 'about:blank',
+                  //     onWebViewCreated: (webViewController) {
+                  //       webViewController.loadUrl(Uri.dataFromString(
+                  //           item['body'],
+                  //           mimeType: 'text/html',
+                  //           encoding: utf8
+                  //       ).toString());
+                  //     },
+                  //   )
+
+
+                    //  WebView(
+                    //   initialUrl: 'about:blank',
+                    //   onWebViewCreated: (webViewController) {
+                    //     webViewController.loadUrl(Uri.dataFromString(
+                    //         item['body'],
+                    //         mimeType: 'text/html',
+                    //         encoding: utf8
+                    //     ).toString());
+                    //   },
+                    // )
+                // ),
               ],
             ),
           )
         ],
       ) :
-      Center(child: Text('読み込み中')) ,
+      const Center(child: Text('読み込み中')) ,
     );
   }
 }

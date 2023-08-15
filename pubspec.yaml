@@ -1,4 +1,4 @@
-name: v2
+name: ver4
 description: A new Flutter project.
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -49,6 +49,7 @@ dev_dependencies:
   flutter_lints: ^2.0.0
   json_annotation: ^4.8.1
   http: ^0.13.6
+  flutter_html:
   # webview_flutter: ^4.2.2
 
 # For information on the generic Dart part of this file, see the
